@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Plop: a daily word ladder. Change one letter at a time until you spell POOP." />
+    <meta property="og:title" content="Plop" />
+    <meta property="og:description" content="A daily word ladder. Change one letter at a time until you spell POOP." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <title>Plop</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-help" aria-label="How to play" title="How to play">?</button>
+      <h1 class="title">Plop</h1>
+      <button class="icon-btn" id="btn-stats" aria-label="Statistics" title="Statistics">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 20h3V10H4zm6.5 0h3V4h-3zM17 20h3v-7h-3z"/></svg>
+      </button>
+    </header>
+
+    <main class="game">
+      <section class="target" aria-label="Target word">
+        <span class="target-label">Reach</span>
+        <div class="row" id="target-row"></div>
+      </section>
+      <section class="board" id="board" aria-live="polite" aria-label="Your ladder"></section>
+      <div class="actions">
+        <button class="text-btn" id="btn-giveup" hidden>Give up</button>
+      </div>
+    </main>
+
+    <div class="keyboard" id="keyboard" aria-label="Keyboard"></div>
+    <div class="toast-host" id="toast-host" aria-live="assertive"></div>
+
+    <dialog id="dlg-help" class="dialog">
+      <button class="dialog-close" data-close aria-label="Close">×</button>
+      <h2>How to play</h2>
+      <p>Turn the starting word into <strong>POOP</strong>, one letter at a time.</p>
+      <ul>
+        <li>Each guess must change <strong>exactly one letter</strong> and be a real word.</li>
+        <li>Letters stay in their positions. No rearranging.</li>
+        <li>A tile turns <span class="brown-word">brown</span> when that letter is right for POOP.</li>
+        <li>There is no limit on guesses. Fewer is better.</li>
+      </ul>
+      <p class="example-label">Example</p>
+      <div class="example" id="help-example"></div>
+      <p>A new Plop arrives every day at midnight UTC. Share your result and see who found the shortest ladder.</p>
+      <button class="primary" data-close>Play</button>
+    </dialog>
+
+    <dialog id="dlg-stats" class="dialog">
+      <button class="dialog-close" data-close aria-label="Close">×</button>
+      <h2>Statistics</h2>
+      <div class="stat-grid" id="stat-grid"></div>
+      <h3>Extra guesses</h3>
+      <div class="histogram" id="histogram"></div>
+      <div id="yesterday"></div>
+    </dialog>
+
+    <dialog id="dlg-results" class="dialog">
+      <button class="dialog-close" data-close aria-label="Close">×</button>
+      <h2 id="results-title"></h2>
+      <p id="results-body"></p>
+      <p id="results-streak" class="muted"></p>
+      <details class="reveal">
+        <summary>Show an optimal ladder</summary>
+        <div id="results-ladder" class="mini-ladder"></div>
+      </details>
+      <div class="results-footer">
+        <div class="countdown">
+          <span class="muted">Next Plop</span>
+          <strong id="countdown">00:00:00</strong>
+        </div>
+        <button class="primary" id="btn-share">Share</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

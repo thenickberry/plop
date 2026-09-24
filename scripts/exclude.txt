@@ -1,0 +1,2 @@
+# Hand-reviewed exclusions from the accepted list, one per line.
+# ENABLE1 words that are real but read as slurs or are otherwise unwelcome in a family game.
