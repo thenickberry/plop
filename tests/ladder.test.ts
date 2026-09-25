@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { distancesTo, lettersChanged, matches, optimalLadder, validateMove } from "../src/game/ladder";
+import { distancesTo, HELP_EXAMPLE, lettersChanged, matches, optimalLadder, validateMove } from "../src/game/ladder";
 import { ACCEPTED, SCHEDULE, TARGET } from "../src/game/words";
 import pinnedRaw from "../scripts/pinned.txt?raw";
 
@@ -76,5 +76,14 @@ describe("shipped schedule", () => {
     const pinned = pinnedRaw.split("\n").map((l) => l.trim()).filter((l) => /^[a-z]{4}$/.test(l));
     expect(pinned.slice(0, 2)).toEqual(["said", "wave"]);
     expect(SCHEDULE.slice(0, pinned.length).map((s) => s.word)).toEqual(pinned);
+  });
+});
+
+describe("HELP_EXAMPLE", () => {
+  it("is a legal ladder ending at the target", () => {
+    expect(HELP_EXAMPLE.at(-1)).toBe(TARGET);
+    for (let i = 1; i < HELP_EXAMPLE.length; i++) {
+      expect(validateMove(HELP_EXAMPLE[i - 1], HELP_EXAMPLE[i], HELP_EXAMPLE.slice(0, i), ACCEPTED)).toEqual({ ok: true });
+    }
   });
 });

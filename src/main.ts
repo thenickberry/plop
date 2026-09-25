@@ -1,7 +1,7 @@
 import "./style.css";
 import { ACCEPTED, TARGET } from "./game/words";
 import { formatCountdown, msUntilNextPuzzle, puzzleFor, puzzleNumberAt, todaysPuzzle } from "./game/daily";
-import { optimalLadder, REJECTION_TEXT, validateMove } from "./game/ladder";
+import { HELP_EXAMPLE, optimalLadder, REJECTION_TEXT, validateMove } from "./game/ladder";
 import { shareText } from "./game/share";
 import { averageExtra, displayedStreak, HISTOGRAM_BUCKETS, recordOutcome } from "./game/stats";
 import { createStore, type GameStatus } from "./game/storage";
@@ -49,7 +49,7 @@ $("btn-share").addEventListener("click", share);
 
 {
   const ex = $("help-example");
-  for (const w of ["cake", "coke", "cope", "coop", "poop"]) ex.appendChild(wordRow(w, { target: TARGET }));
+  for (const w of HELP_EXAMPLE) ex.appendChild(wordRow(w, { target: TARGET }));
 }
 
 // ---------- game flow ----------
