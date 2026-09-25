@@ -31,8 +31,6 @@ const state: State = {
 
 // ---------- static pieces ----------
 
-$("target-row").replaceWith(Object.assign(wordRow(TARGET, { target: TARGET }), { id: "target-row" }));
-
 const board = createBoard($("board"), TARGET);
 const keyboard = createKeyboard($("keyboard"), onKey);
 const giveUpBtn = $<HTMLButtonElement>("btn-giveup");

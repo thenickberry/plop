@@ -87,17 +87,6 @@ body {
   gap: 14px;
   overflow-y: auto;
 }
-.target {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.target-label {
-  color: var(--muted);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
 .board {
   display: flex;
   flex-direction: column;
