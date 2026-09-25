@@ -2,4 +2,4 @@
 # verbatim, so a regenerated schedule never changes a puzzle players have seen. Append each
 # released word (see `npm run words` output or the live site) before regenerating.
 said
-fuji
+wave

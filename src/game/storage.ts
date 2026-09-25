@@ -53,9 +53,11 @@ function write(kv: KV | undefined, key: string, value: unknown): void {
 
 export function createStore(kv: KV | undefined = safeStorage()) {
   return {
-    loadGame(puzzleNumber: number): SavedGame | undefined {
+    /** A save for another puzzle, or for this number before its start word was swapped, is dropped. */
+    loadGame(puzzleNumber: number, startWord: string): SavedGame | undefined {
       const g = read<SavedGame>(kv, KEYS.game);
       if (!g || g.puzzleNumber !== puzzleNumber || !Array.isArray(g.words)) return undefined;
+      if (g.words[0] !== startWord) return undefined;
       return g;
     },
     saveGame(game: SavedGame): void {
