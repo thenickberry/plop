@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { distancesTo, lettersChanged, matches, optimalLadder, validateMove } from "../src/game/ladder";
 import { ACCEPTED, SCHEDULE, TARGET } from "../src/game/words";
+import pinnedRaw from "../scripts/pinned.txt?raw";
 
 const dict = new Set(["cold", "cord", "card", "ward", "warm", "worm", "word", "wood", "wool", "poop", "pool", "loop", "loot"]);
 
@@ -70,5 +71,10 @@ describe("shipped schedule", () => {
   it("contains the target and no duplicates", () => {
     expect(ACCEPTED.has(TARGET)).toBe(true);
     expect(new Set(SCHEDULE.map((s) => s.word)).size).toBe(SCHEDULE.length);
+  });
+  it("starts with every released puzzle, in order", () => {
+    const pinned = pinnedRaw.split("\n").map((l) => l.trim()).filter((l) => /^[a-z]{4}$/.test(l));
+    expect(pinned.slice(0, 2)).toEqual(["said", "fuji"]);
+    expect(SCHEDULE.slice(0, pinned.length).map((s) => s.word)).toEqual(pinned);
   });
 });

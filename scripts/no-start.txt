@@ -1,0 +1,17 @@
+# Accepted as moves but never used as a start word: real ENABLE1 words that most players read as a
+# name or a foreign word, so a puzzle opening on one feels like a trick. One per line.
+alan
+beth
+brad
+carl
+casa
+chad
+ciao
+gage
+hart
+jill
+kirk
+marc
+matt
+rick
+shaw

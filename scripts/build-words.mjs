@@ -1,9 +1,15 @@
 // Generates src/data/words.json from public word lists.
 //
 //   accepted  : every 4-letter ENABLE1 word, minus the LDNOOBW blocklist and scripts/exclude.txt
-//   schedule  : start words for the daily puzzle — accepted words that are also in the Google
-//               10k common-words list, with a shortest ladder to POOP of 4..7 moves and no letter
-//               already in the correct position, in a seeded shuffled order.
+//   schedule  : scripts/pinned.txt first, verbatim, then start words for the daily puzzle in a
+//               seeded shuffled order: accepted words that are also in the Google 10k
+//               common-words list, with a shortest ladder to POOP of 4..7 moves, no letter already
+//               in the correct position, and at least one shortest ladder made only of familiar
+//               words (the 50k subtitle frequency list), so no puzzle hinges on a word like FUCI.
+//               scripts/no-start.txt removes words that read as names from the start pool only.
+//
+// pinned.txt holds every puzzle already released, in order. Append to it before regenerating so
+// released puzzle numbers keep their words; everything after the pinned prefix may reshuffle.
 //
 // Run with `npm run words`. Output is committed so the puzzle schedule is stable.
 
@@ -25,6 +31,8 @@ const SOURCES = {
   enable1: "https://raw.githubusercontent.com/dolph/dictionary/master/enable1.txt",
   common: "https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa-no-swears.txt",
   blocklist: "https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en",
+  // "word count" per line, from OpenSubtitles: a proxy for words a player would think of.
+  familiar: "https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/en/en_50k.txt",
 };
 
 async function fetchCached(name, url) {
@@ -97,14 +105,18 @@ function shuffle(arr, seed) {
 
 const sharesPosition = (a, b) => [...a].some((ch, i) => ch === b[i]);
 
+async function readList(name) {
+  const file = path.join(here, name);
+  return existsSync(file) ? fourLetter(await readFile(file, "utf8")) : [];
+}
+
 async function main() {
-  const [enable1, common, blocklistRaw] = await Promise.all(
+  const [enable1, common, blocklistRaw, familiarRaw] = await Promise.all(
     Object.entries(SOURCES).map(([n, u]) => fetchCached(n, u)),
   );
-  const excludeFile = path.join(here, "exclude.txt");
-  const exclude = existsSync(excludeFile)
-    ? new Set(fourLetter(await readFile(excludeFile, "utf8")))
-    : new Set();
+  const exclude = new Set(await readList("exclude.txt"));
+  const pinned = await readList("pinned.txt");
+  const noStart = new Set(await readList("no-start.txt"));
   const blocklist = new Set(fourLetter(blocklistRaw));
 
   const accepted = new Set(
@@ -114,14 +126,29 @@ async function main() {
 
   const dist = bfsFrom(TARGET, accepted);
   const commonSet = new Set(fourLetter(common));
+  // Frequency lines are "word count"; keep the word.
+  const familiar = new Set(
+    fourLetter(familiarRaw.replace(/ \d+$/gm, "")).filter((w) => accepted.has(w)),
+  );
+  familiar.add(TARGET);
+  // A start word passes when its par is also reachable through familiar words alone.
+  const familiarDist = bfsFrom(TARGET, familiar);
+
+  for (const w of pinned) {
+    if (!dist.has(w)) throw new Error(`pinned word ${w} is not accepted or cannot reach ${TARGET}`);
+  }
+  if (new Set(pinned).size !== pinned.length) throw new Error("pinned.txt repeats a word");
+  const pinnedSet = new Set(pinned);
 
   const pool = [...accepted]
     .filter((w) => commonSet.has(w))
     .filter((w) => dist.has(w) && dist.get(w) >= MIN_PAR && dist.get(w) <= MAX_PAR)
     .filter((w) => !sharesPosition(w, TARGET))
+    .filter((w) => familiarDist.get(w) === dist.get(w))
+    .filter((w) => !pinnedSet.has(w) && !noStart.has(w))
     .sort();
 
-  const schedule = shuffle(pool, SEED).map((word) => ({ word, par: dist.get(word) }));
+  const schedule = [...pinned, ...shuffle(pool, SEED)].map((word) => ({ word, par: dist.get(word) }));
 
   const reachable = [...accepted].filter((w) => dist.has(w)).length;
   const histogram = {};
@@ -138,7 +165,7 @@ async function main() {
 
   console.log(`accepted words : ${accepted.size} (${reachable} can reach ${TARGET.toUpperCase()})`);
   console.log(`blocklist hits : ${fourLetter(blocklistRaw).filter((w) => fourLetter(enable1).includes(w)).length}`);
-  console.log(`start pool     : ${schedule.length}`);
+  console.log(`start pool     : ${schedule.length} (${pinned.length} pinned)`);
   console.log(`par histogram  : ${JSON.stringify(histogram)}`);
   console.log(`first ten      : ${schedule.slice(0, 10).map((s) => `${s.word}/${s.par}`).join(" ")}`);
 }
