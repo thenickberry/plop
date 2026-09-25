@@ -74,7 +74,7 @@ describe("shipped schedule", () => {
   });
   it("starts with every released puzzle, in order", () => {
     const pinned = pinnedRaw.split("\n").map((l) => l.trim()).filter((l) => /^[a-z]{4}$/.test(l));
-    expect(pinned.slice(0, 2)).toEqual(["said", "fuji"]);
+    expect(pinned.slice(0, 2)).toEqual(["said", "wave"]);
     expect(SCHEDULE.slice(0, pinned.length).map((s) => s.word)).toEqual(pinned);
   });
 });

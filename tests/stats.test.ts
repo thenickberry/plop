@@ -64,8 +64,13 @@ describe("store", () => {
   it("round-trips a game and drops it when the puzzle changes", () => {
     const store = createStore(fakeKV());
     store.saveGame({ puzzleNumber: 2, words: ["cold", "cord"], status: "playing" });
-    expect(store.loadGame(2)?.words).toEqual(["cold", "cord"]);
-    expect(store.loadGame(3)).toBeUndefined();
+    expect(store.loadGame(2, "cold")?.words).toEqual(["cold", "cord"]);
+    expect(store.loadGame(3, "cold")).toBeUndefined();
+  });
+  it("drops a save whose start word no longer matches the puzzle", () => {
+    const store = createStore(fakeKV());
+    store.saveGame({ puzzleNumber: 2, words: ["fuji", "fuci"], status: "playing" });
+    expect(store.loadGame(2, "wave")).toBeUndefined();
   });
   it("repairs a short histogram from an older save", () => {
     const kv = fakeKV();

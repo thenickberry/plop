@@ -42,8 +42,10 @@ against the shipped dictionary. To keep a word as a move but never as a start wo
 `no-start.txt` instead.
 
 The difficulty filter keeps a start word only if one of its shortest ladders uses familiar words
-alone (the OpenSubtitles 50k frequency list). It exists because puzzle #2, FUJI, has a single legal
-move, FUCI.
+alone (the OpenSubtitles 50k frequency list). It exists because FUJI, briefly puzzle #2, has a single
+legal move, FUCI. FUJI was swapped for WAVE on its own day; a pinned word can be swapped like that
+because `loadGame` drops a save whose start word no longer matches the puzzle, but players who had
+already finished keep that day's stats.
 
 The generator reads `scripts/.cache/{enable1,common,blocklist,familiar}.txt` before fetching. Node's
 fetch cannot reach GitHub from the Claude Code sandbox; fill the cache with curl first, using the

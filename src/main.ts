@@ -22,7 +22,7 @@ interface State {
   status: GameStatus;
 }
 
-const saved = store.loadGame(puzzle.number);
+const saved = store.loadGame(puzzle.number, puzzle.word);
 const state: State = {
   words: saved?.words ?? [puzzle.word],
   current: "",
