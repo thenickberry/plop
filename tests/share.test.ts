@@ -5,13 +5,13 @@ describe("shareText", () => {
   it("matches the agreed format", () => {
     const text = shareText({
       number: 42,
-      words: ["cake", "coke", "coop", "poop"],
+      words: ["cake", "coke", "come", "comp", "coop", "poop"],
       target: "poop",
-      best: 3,
+      best: 5,
       url: "https://example.test/",
     });
     expect(text).toBe(
-      ["Plop #42 3/3", "⬜⬜⬜⬜", "⬜🟫⬜⬜", "⬜🟫🟫🟫", "🟫🟫🟫🟫", "", "https://example.test/"].join("\n"),
+      ["Plop #42 5/5", "⬜⬜⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜🟫", "⬜🟫🟫🟫", "🟫🟫🟫🟫", "", "https://example.test/"].join("\n"),
     );
   });
   it("marks a give-up with X", () => {

@@ -15,6 +15,9 @@ export const REJECTION_TEXT: Record<MoveRejection, string> = {
   "wrong-length": "Four letters, please",
 };
 
+/** The ladder shown in the help dialog. A test holds it to the rules. */
+export const HELP_EXAMPLE = ["cake", "coke", "come", "comp", "coop", "poop"] as const;
+
 export function lettersChanged(a: string, b: string): number {
   let n = 0;
   for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) n++;
