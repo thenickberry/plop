@@ -31,7 +31,13 @@
   }
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  /* Rapid taps on the keyboard would otherwise double-tap-zoom on mobile. Set on every element,
+     not just the root, because scroll containers (the board, dialogs) reset the inherited
+     restriction. Pinch zoom and scrolling still work. */
+  touch-action: manipulation;
+}
 html, body { height: 100%; }
 body {
   margin: 0;
