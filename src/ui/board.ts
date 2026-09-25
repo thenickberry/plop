@@ -25,6 +25,12 @@ export function createBoard(root: HTMLElement, target: string) {
 
   return {
     sync(view: BoardView, animate: boolean) {
+      // Drop rows past the end of the word list (the ladder was reset).
+      if (rendered > view.words.length) {
+        const rows = [...root.children].filter((c) => c !== activeRow);
+        for (const row of rows.slice(view.words.length)) row.remove();
+        rendered = view.words.length;
+      }
       // Append rows for words not yet rendered (only ever the last one, except on first paint).
       for (let i = rendered; i < view.words.length; i++) {
         const row = wordRow(view.words[i], { target, reveal: animate && i > 0 && i === view.words.length - 1 });
