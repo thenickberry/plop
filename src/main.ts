@@ -36,6 +36,7 @@ $("target-row").replaceWith(Object.assign(wordRow(TARGET, { target: TARGET }), {
 const board = createBoard($("board"), TARGET);
 const keyboard = createKeyboard($("keyboard"), onKey);
 const giveUpBtn = $<HTMLButtonElement>("btn-giveup");
+const resetBtn = $<HTMLButtonElement>("btn-reset");
 
 const help = wireDialog($<HTMLDialogElement>("dlg-help"), () => store.markHelpSeen());
 const stats = wireDialog($<HTMLDialogElement>("dlg-stats"));
@@ -68,6 +69,7 @@ function render(animate = false): void {
   board.sync({ words: state.words, current: playing ? state.current : undefined }, animate);
   keyboard.setEnabled(playing);
   giveUpBtn.hidden = !playing;
+  resetBtn.hidden = !playing || guesses() === 0;
 }
 
 function onKey(key: string): void {
@@ -101,27 +103,46 @@ function submit(): void {
   render(true);
 }
 
-let giveUpArmed: ReturnType<typeof setTimeout> | undefined;
-giveUpBtn.addEventListener("click", () => {
-  if (giveUpArmed === undefined) {
-    giveUpBtn.textContent = "Really give up?";
-    giveUpBtn.classList.add("danger");
-    giveUpArmed = setTimeout(disarmGiveUp, 3000);
-    return;
+/** A button that needs a second tap within three seconds to act. */
+function confirmButton(btn: HTMLButtonElement, prompt: string, action: () => void): () => void {
+  const label = btn.textContent;
+  let armed: ReturnType<typeof setTimeout> | undefined;
+  function disarm(): void {
+    if (armed !== undefined) clearTimeout(armed);
+    armed = undefined;
+    btn.textContent = label;
+    btn.classList.remove("danger");
   }
-  disarmGiveUp();
+  btn.addEventListener("click", () => {
+    if (armed === undefined) {
+      btn.textContent = prompt;
+      btn.classList.add("danger");
+      armed = setTimeout(disarm, 3000);
+      return;
+    }
+    disarm();
+    action();
+  });
+  return disarm;
+}
+
+const disarmGiveUp = confirmButton(giveUpBtn, "Really give up?", () => {
+  disarmReset();
   state.status = "gave-up";
   state.current = "";
   finish();
   persist();
   render();
 });
-function disarmGiveUp(): void {
-  if (giveUpArmed !== undefined) clearTimeout(giveUpArmed);
-  giveUpArmed = undefined;
-  giveUpBtn.textContent = "Give up";
-  giveUpBtn.classList.remove("danger");
-}
+
+// Back to the start word. Stats only see the final ladder, so this is free until the puzzle is solved.
+const disarmReset = confirmButton(resetBtn, "Really reset?", () => {
+  disarmGiveUp();
+  state.words = [puzzle.word];
+  state.current = "";
+  persist();
+  render();
+});
 
 function finish(): void {
   const won = state.status === "won";
