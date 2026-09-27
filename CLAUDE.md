@@ -72,5 +72,5 @@ Unit tests do not touch the DOM. After a UI change, run `npm run build` with `VI
 start `vite preview` with the same variable, and drive it with the Playwright MCP tools at a 420px
 viewport in both colour schemes. The flows the smoke pass covers: first-visit help dialog,
 the four rejection toasts, keyboard input from both physical keys and on-screen buttons, results
-dialog after a win and after give-up, share text on the clipboard, stats dialog, and a reload
+dialog after a win and after give-up, share text via the share sheet (clipboard where unsupported), stats dialog, and a reload
 restoring a finished game with results reopened. Deploying without that pass is guessing.
