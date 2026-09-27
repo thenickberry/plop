@@ -204,6 +204,23 @@ async function share(): Promise<void> {
     best: puzzle.par,
     gaveUp: state.status === "gave-up",
   });
+  // Prefer the native share sheet (Messages, etc.). Text only: passing `url`
+  // separately makes some targets drop the text in favour of a link preview.
+  const data: ShareData = { text };
+  if (typeof navigator.share === "function" && (navigator.canShare?.(data) ?? true)) {
+    try {
+      await navigator.share(data);
+      return;
+    } catch (err) {
+      // The player dismissed the sheet: nothing to do.
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      // Anything else (permission, unsupported target): copy instead.
+    }
+  }
+  await copyText(text);
+}
+
+async function copyText(text: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
     toast("Copied to clipboard");
