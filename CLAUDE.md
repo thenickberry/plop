@@ -23,8 +23,10 @@ Chosen deliberately in a design review. Build on them as fixed points.
 - Deliberate divergences from the original: reused words are rejected, a give-up button exists and
   breaks the streak, and the accepted list is wide (ENABLE1) because the original's narrow list
   draws complaints.
-- Puzzles roll over at **midnight UTC**, not local midnight, so friends in different timezones
-  share a puzzle number. Puzzle #1 is 2026-09-24. Both live in `src/game/daily.ts`.
+- Puzzles roll over at the **player's local midnight** (changed from midnight UTC on 2026-09-28).
+  The trade-off: at a given instant, friends in different timezones can be on different puzzle
+  numbers. Puzzle #1 is the local calendar day 2026-09-24. Both live in `src/game/daily.ts`, whose
+  tests run under `TZ=America/New_York` (set in `vite.config.ts`) to cover the offset and DST edges.
 - Tiles have two states only: brown for a positional match, neutral otherwise. No "present but
   misplaced" colour.
 - Deferred on purpose: practice mode, hints, theme toggle, PWA, custom domain, accounts.

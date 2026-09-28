@@ -7,5 +7,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],
+    // A zone west of UTC with DST, so daily.ts tests cover the local/UTC gap and the DST edges.
+    env: { TZ: "America/New_York" },
   },
 });
