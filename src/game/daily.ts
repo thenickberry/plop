@@ -1,6 +1,9 @@
 import { SCHEDULE, type ScheduledPuzzle } from "./words";
 
-/** Puzzle #1 is this UTC day. Puzzles roll over at midnight UTC so friends anywhere share a number. */
+/**
+ * Puzzle #1 is the calendar day 2026-09-24. Puzzles roll over at the player's local midnight, so
+ * the same instant can be different puzzle numbers in different timezones.
+ */
 export const EPOCH_UTC = Date.UTC(2026, 8, 24);
 const DAY_MS = 86_400_000;
 
@@ -9,7 +12,9 @@ export interface Puzzle extends ScheduledPuzzle {
 }
 
 export function puzzleNumberAt(now: Date = new Date()): number {
-  return Math.floor((now.getTime() - EPOCH_UTC) / DAY_MS) + 1;
+  // Map the local calendar date onto a UTC midnight so DST's 23- and 25-hour days still count as one.
+  const localDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((localDay - EPOCH_UTC) / DAY_MS) + 1;
 }
 
 export function puzzleFor(number: number, schedule: readonly ScheduledPuzzle[] = SCHEDULE): Puzzle {
@@ -24,9 +29,8 @@ export function todaysPuzzle(now: Date = new Date()): Puzzle {
 }
 
 export function msUntilNextPuzzle(now: Date = new Date()): number {
-  const n = puzzleNumberAt(now);
-  const nextStart = EPOCH_UTC + n * DAY_MS;
-  return nextStart - now.getTime();
+  const nextStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return nextStart.getTime() - now.getTime();
 }
 
 export function formatCountdown(ms: number): string {

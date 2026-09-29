@@ -13,7 +13,7 @@ Inspired by [Poople](https://poople.io/). This is an independent clone built for
 - A tile turns brown when its letter is correct for POOP. Changing a brown letter is allowed.
 - A word can't be reused within a game.
 - No guess limit. You can give up, which reveals an optimal ladder and ends your streak.
-- One puzzle per day, rolling over at midnight UTC so everyone shares the same puzzle number.
+- One puzzle per day, rolling over at your local midnight.
 
 ## Development
 
@@ -36,7 +36,7 @@ npm run build      # dist/
   [Google 10,000 common words](https://github.com/first20hours/google-10000-english) list, with a
   shortest ladder to POOP of 4 to 7 moves and no letter already in place, in a fixed shuffled order.
 
-Puzzle #1 is 2026-09-24 (UTC). The schedule wraps when the pool runs out. Regenerating the list
+Puzzle #1 is 2026-09-24 (local date). The schedule wraps when the pool runs out. Regenerating the list
 changes future puzzles, so treat `words.json` as append-only in spirit.
 
 If the script can't download sources (some networks block Node's fetch), drop the three files
