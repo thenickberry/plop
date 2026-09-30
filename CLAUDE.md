@@ -27,8 +27,8 @@ Chosen deliberately in a design review. Build on them as fixed points.
   The trade-off: at a given instant, friends in different timezones can be on different puzzle
   numbers. Puzzle #1 is the local calendar day 2026-09-24. Local dates before 2026-09-30 keep the
   old UTC numbering, so the switch skipped nothing west of UTC (#7 ran from the evening of the 29th
-  through the 30th there). East of UTC it skipped #6 for anyone who hadn't finished it, so
-  `stats.ts` treats #5 -> #7 as consecutive. Both live in `src/game/daily.ts`, whose
+  through the 30th there). East of UTC it could have skipped #6, but every player at the time was
+  on Pacific time. Both live in `src/game/daily.ts`, whose
   tests run under `TZ=America/New_York` (set in `vite.config.ts`) to cover the offset and DST edges.
 - Tiles have two states only: brown for a positional match, neutral otherwise. No "present but
   misplaced" colour.

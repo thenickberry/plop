@@ -27,19 +27,6 @@ export function emptyStats(): Stats {
   };
 }
 
-/**
- * Puzzle #6 could vanish unplayed for anyone east of UTC: the switch from UTC to local-midnight
- * rollover went live around 23:10 UTC on 2026-09-29, when their local date was already the 30th, so
- * they jumped straight from #6 to #7. Treat #5 -> #7 as consecutive so that jump never breaks a streak.
- */
-const ROLLOVER_SWITCH_SKIPPED = 6;
-
-/** Whether a win on `puzzleNumber` extends a streak whose last win was `lastWon`. */
-function continuesStreak(lastWon: number, puzzleNumber: number): boolean {
-  if (lastWon === puzzleNumber - 1) return true;
-  return lastWon === ROLLOVER_SWITCH_SKIPPED - 1 && puzzleNumber === ROLLOVER_SWITCH_SKIPPED + 1;
-}
-
 export interface Outcome {
   puzzleNumber: number;
   won: boolean;
@@ -61,7 +48,7 @@ export function recordOutcome(stats: Stats, outcome: Outcome): Stats {
   const extra = Math.max(0, outcome.extra);
   next.extraTotal += extra;
   next.histogram[Math.min(extra, HISTOGRAM_BUCKETS - 1)] += 1;
-  next.currentStreak = continuesStreak(stats.lastWon, outcome.puzzleNumber) ? stats.currentStreak + 1 : 1;
+  next.currentStreak = stats.lastWon === outcome.puzzleNumber - 1 ? stats.currentStreak + 1 : 1;
   next.bestStreak = Math.max(next.bestStreak, next.currentStreak);
   next.lastWon = outcome.puzzleNumber;
   return next;
@@ -69,7 +56,7 @@ export function recordOutcome(stats: Stats, outcome: Outcome): Stats {
 
 /** The streak shown today: a streak whose last win is older than yesterday has lapsed. */
 export function displayedStreak(stats: Stats, todayNumber: number): number {
-  return stats.lastWon >= todayNumber - 1 || continuesStreak(stats.lastWon, todayNumber) ? stats.currentStreak : 0;
+  return stats.lastWon >= todayNumber - 1 ? stats.currentStreak : 0;
 }
 
 export function averageExtra(stats: Stats): number | undefined {
