@@ -13,15 +13,22 @@ it("runs in the pinned timezone", () => {
 });
 
 describe("puzzleNumberAt", () => {
-  it("is #1 for the whole epoch day in local time", () => {
-    expect(puzzleNumberAt(new Date(2026, 8, 24, 0, 0))).toBe(1);
-    expect(puzzleNumberAt(new Date(2026, 8, 24, 23, 59, 59, 999))).toBe(1);
-    expect(puzzleNumberAt(new Date(2026, 8, 25, 0, 0))).toBe(2);
-  });
   it("rolls over at local midnight, not UTC midnight", () => {
-    // 2026-09-26T02:00Z is still the evening of the 25th in New York: #2, not #3.
-    expect(puzzleNumberAt(new Date(Date.UTC(2026, 8, 26, 2, 0)))).toBe(2);
-    expect(puzzleNumberAt(new Date(Date.UTC(2026, 8, 26, 4, 0)))).toBe(3);
+    // 2026-10-03T02:00Z is still the evening of the 2nd in New York.
+    expect(puzzleNumberAt(new Date(2026, 9, 2, 0, 0))).toBe(9);
+    expect(puzzleNumberAt(new Date(Date.UTC(2026, 9, 3, 2, 0)))).toBe(9);
+    expect(puzzleNumberAt(new Date(2026, 9, 3, 0, 0))).toBe(10);
+  });
+  it("keeps UTC numbering for local dates before the switch", () => {
+    // New York on the 29th: #6 until 8pm (midnight UTC), then #7.
+    expect(puzzleNumberAt(new Date(2026, 8, 24, 0, 0))).toBe(1);
+    expect(puzzleNumberAt(new Date(2026, 8, 29, 19, 59))).toBe(6);
+    expect(puzzleNumberAt(new Date(2026, 8, 29, 20, 0))).toBe(7);
+  });
+  it("carries the evening's puzzle through the first local day, skipping nothing", () => {
+    expect(puzzleNumberAt(new Date(2026, 8, 30, 0, 0))).toBe(7);
+    expect(puzzleNumberAt(new Date(2026, 8, 30, 23, 59))).toBe(7);
+    expect(puzzleNumberAt(new Date(2026, 9, 1, 0, 0))).toBe(8);
   });
   it("counts DST-shortened and -lengthened days as one puzzle each", () => {
     // US DST ends 2026-11-01 (25-hour day) and starts 2027-03-14 (23-hour day).
@@ -45,8 +52,14 @@ describe("puzzleFor", () => {
 
 describe("countdown", () => {
   it("counts down to the next local midnight", () => {
-    const now = new Date(2026, 8, 24, 22, 30, 15);
+    const now = new Date(2026, 9, 5, 22, 30, 15);
     expect(formatCountdown(msUntilNextPuzzle(now))).toBe("01:29:45");
+  });
+  it("counts down to midnight UTC before the switch", () => {
+    expect(formatCountdown(msUntilNextPuzzle(new Date(2026, 8, 29, 19, 0)))).toBe("01:00:00");
+  });
+  it("counts past the midnight that starts the first local day, where the puzzle carries on", () => {
+    expect(formatCountdown(msUntilNextPuzzle(new Date(2026, 8, 29, 21, 0)))).toBe("27:00:00");
   });
   it("counts the extra hour on the day DST ends", () => {
     const now = new Date(2026, 10, 1, 0, 0, 0);

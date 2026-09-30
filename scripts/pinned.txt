@@ -3,3 +3,8 @@
 # released word (see `npm run words` output or the live site) before regenerating.
 said
 wave
+desk
+stem
+self
+bush
+raid
