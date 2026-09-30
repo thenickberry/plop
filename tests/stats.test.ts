@@ -31,6 +31,21 @@ describe("recordOutcome", () => {
     expect(s.currentStreak).toBe(1);
     expect(s.bestStreak).toBe(2);
   });
+  it("bridges #6, which the switch to local-midnight rollover skipped east of UTC", () => {
+    let s = emptyStats();
+    s = recordOutcome(s, { puzzleNumber: 4, won: true, extra: 0 });
+    s = recordOutcome(s, { puzzleNumber: 5, won: true, extra: 0 });
+    expect(displayedStreak(s, 7)).toBe(2);
+    s = recordOutcome(s, { puzzleNumber: 7, won: true, extra: 0 });
+    expect(s.currentStreak).toBe(3);
+  });
+  it("does not bridge any other two-day gap", () => {
+    let s = emptyStats();
+    s = recordOutcome(s, { puzzleNumber: 6, won: true, extra: 0 });
+    expect(displayedStreak(s, 8)).toBe(0);
+    s = recordOutcome(s, { puzzleNumber: 8, won: true, extra: 0 });
+    expect(s.currentStreak).toBe(1);
+  });
   it("counts a give-up as played and breaks the streak", () => {
     let s = emptyStats();
     s = recordOutcome(s, { puzzleNumber: 1, won: true, extra: 0 });
