@@ -60,8 +60,7 @@ URLs in `SOURCES`.
 
 - Build and preview must agree on the base path. GitHub Pages serves from `/plop/`, so CI sets
   `VITE_BASE=/plop/`. A `vite preview` started without it serves assets at the root and the page
-  loads blank with 404s in the console. Renaming the repo means changing `SITE_URL` in
-  `src/game/share.ts` too; CI derives the base from the repo name.
+  loads blank with 404s in the console. CI derives the base from the repo name.
 - `npm install` in the sandbox needs `--cache ~/.cache/npm`; the default cache dir is read-only there.
 - Test fixtures: POOP has an O in position 2 and a P in positions 1 and 4, so innocuous-looking
   words like COLD already score a brown tile. Use CAKE-style words when a fixture needs zero matches.

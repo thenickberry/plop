@@ -8,10 +8,9 @@ describe("shareText", () => {
       words: ["cake", "coke", "come", "comp", "coop", "poop"],
       target: "poop",
       best: 5,
-      url: "https://example.test/",
     });
     expect(text).toBe(
-      ["Plop #42 5/5", "⬜⬜⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜🟫", "⬜🟫🟫🟫", "🟫🟫🟫🟫", "", "https://example.test/"].join("\n"),
+      ["Plop #42 5/5", "⬜⬜⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜⬜", "⬜🟫⬜🟫", "⬜🟫🟫🟫", "🟫🟫🟫🟫"].join("\n"),
     );
   });
   it("marks a give-up with X", () => {
@@ -28,7 +27,7 @@ describe("shareText", () => {
   it("does not add a remainder line at exactly the cap", () => {
     const words = new Array(MAX_SHARE_ROWS).fill("cake");
     const lines = shareText({ number: 7, words, target: "poop", best: 4 }).split("\n");
-    expect(lines).toHaveLength(1 + MAX_SHARE_ROWS + 2);
+    expect(lines).toHaveLength(1 + MAX_SHARE_ROWS);
   });
   it("renders repeated letters positionally", () => {
     expect(emojiRow("oops", "poop")).toBe("⬜🟫⬜⬜");
