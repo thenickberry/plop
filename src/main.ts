@@ -35,6 +35,8 @@ const board = createBoard($("board"), TARGET);
 const keyboard = createKeyboard($("keyboard"), onKey);
 const giveUpBtn = $<HTMLButtonElement>("btn-giveup");
 const resetBtn = $<HTMLButtonElement>("btn-reset");
+const shareBoardBtn = $<HTMLButtonElement>("btn-share-board");
+const resultsBtn = $<HTMLButtonElement>("btn-results");
 
 const help = wireDialog($<HTMLDialogElement>("dlg-help"), () => store.markHelpSeen());
 const stats = wireDialog($<HTMLDialogElement>("dlg-stats"));
@@ -46,6 +48,9 @@ $("btn-stats").addEventListener("click", () => {
   stats.open();
 });
 $("btn-share").addEventListener("click", share);
+// Once the results dialog is dismissed, these keep sharing and the countdown reachable.
+shareBoardBtn.addEventListener("click", share);
+resultsBtn.addEventListener("click", openResults);
 
 {
   const ex = $("help-example");
@@ -68,6 +73,8 @@ function render(animate = false): void {
   keyboard.setEnabled(playing);
   giveUpBtn.hidden = !playing;
   resetBtn.hidden = !playing || guesses() === 0;
+  shareBoardBtn.hidden = playing;
+  resultsBtn.hidden = playing;
 }
 
 function onKey(key: string): void {
