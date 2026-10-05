@@ -145,7 +145,18 @@ body {
 }
 .tile.pop { animation: pop 120ms ease; }
 
-.actions { min-height: 32px; }
+.actions { min-height: 32px; display: flex; align-items: center; gap: 4px; }
+.pill-btn {
+  border: none;
+  border-radius: 999px;
+  background: var(--brown);
+  color: var(--brown-fg);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 8px 22px;
+  cursor: pointer;
+}
 .text-btn {
   background: none;
   border: none;
